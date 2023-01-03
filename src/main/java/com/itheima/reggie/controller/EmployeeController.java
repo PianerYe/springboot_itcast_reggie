@@ -101,7 +101,7 @@ public class EmployeeController {
         //添加排序条件
         queryWrapper.orderByDesc(Employee::getUpdateTime);
         //执行查询
-        employeeService.page(pageInfo);
+        employeeService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
     }
 }
