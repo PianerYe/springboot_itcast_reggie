@@ -114,7 +114,7 @@ public class EmployeeController {
         Long empId = (Long) request.getSession().getAttribute("employee");
             log.info("员工状态{}",employee.getStatus());
         //1610313360639824000
-            employee.setUpdateUser(empId);
+        employee.setUpdateUser(empId);
         employee.setUpdateTime(LocalDateTime.now());
 
         employeeService.updateById(employee);
