@@ -8,6 +8,7 @@ import com.itheima.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,5 +104,21 @@ public class EmployeeController {
         //执行查询
         employeeService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
+    }
+
+    /**
+     *  修改员工信息
+    */
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
+        //获得当前用户id
+        Long empId = (Long) request.getSession().getAttribute("employee");
+            log.info("员工状态{}",employee.getStatus());
+        //1610313360639824000
+            employee.setUpdateUser(empId);
+        employee.setUpdateTime(LocalDateTime.now());
+
+        employeeService.updateById(employee);
+        return R.success("修改成功");
     }
 }
