@@ -202,15 +202,6 @@
             this.closeLoading()
             this.$message.success(msg)
           },
-          menuHandle(item, goBackFlag) {
-            this.loading = true
-            this.menuActived = item.id
-            this.iframeUrl = item.url
-            this.headTitle = item.name
-            this.goBackFlag = goBackFlag
-            this.closeLoading()
-            this.$message.success(msg)
-          },
           closeLoading(){
             this.timer = null
             this.timer = setTimeout(()=>{
