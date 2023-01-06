@@ -112,7 +112,10 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
         //获得当前用户id
 //        Long empId = (Long) request.getSession().getAttribute("employee");
-            log.info("员工状态{}",employee.getStatus());
+        log.info("员工状态{}",employee.getStatus());
+
+        long id = Thread.currentThread().getId();
+        log.info("线程ID为：{}",id);
         //1610313360639824000
 //        employee.setUpdateUser(empId);
 //        employee.setUpdateTime(LocalDateTime.now());
