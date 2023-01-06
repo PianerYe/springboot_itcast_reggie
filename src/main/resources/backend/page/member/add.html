@@ -165,7 +165,7 @@
                     if (res.code === 1) {
                       this.$message.success('员工添加成功！')
                       if (!st) {
-                        this.goBack()
+                        this.goBack('员工添加成功！')
                       } else {
                         this.ruleForm = {
                           username: '',
@@ -188,10 +188,10 @@
                     ...this.ruleForm,
                     sex: this.ruleForm.sex === '女' ? '0' : '1'
                   }
-                  editEmployee(params).then(res => {
+                  editEmployee(params).then(async res => {
                     if (res.code === 1) {
-                      this.$message.success('员工信息修改成功！')
-                      this.goBack()
+                       // this.$message.success('员工信息修改成功！')
+                      this.goBack('员工信息修改成功！')
                     } else {
                       this.$message.error(res.msg || '操作失败')
                     }
@@ -205,12 +205,13 @@
               }
             })
           },
-          goBack(){
+          goBack(msg){
+            // window.location.href(`/backend/page/member/list.html?id=2`)
             window.parent.menuHandle({
               id: '2',
               url: '/backend/page/member/list.html',
               name: '员工管理'
-            },false)
+            },false,msg)
           }
         }
       })
