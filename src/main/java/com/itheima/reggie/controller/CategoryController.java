@@ -32,7 +32,7 @@ public class CategoryController {
     }
 
     /**
-     * 菜品信息分页查询
+     * 分页查询
      * */
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize){
@@ -42,10 +42,8 @@ public class CategoryController {
         Page pageInfo = new Page(page,pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper();
-        //添加过滤条件
-//        queryWrapper.like(StringUtils.isNotEmpty(name),Category::getName,name);//模糊查询，利用like
-        //添加排序条件
-        queryWrapper.orderByDesc(Category::getUpdateTime);
+        //添加排序条件,根据sort升序排序
+        queryWrapper.orderByAsc(Category::getSort);
         //执行查询
         categoryService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
