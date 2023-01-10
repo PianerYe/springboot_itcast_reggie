@@ -20,7 +20,7 @@ import java.util.UUID;
 @Slf4j
 public class CommonController {
 
-    @Value("reggie.path")
+    @Value("${reggie.path}")
     private String basePath;
     /**
      * 文件上传
@@ -46,7 +46,7 @@ public class CommonController {
         }
 
         try {
-            file.transferTo(new File(basePath + "/" + fileName));
+            file.transferTo(new File(basePath  + File.separator + fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
