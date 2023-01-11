@@ -36,6 +36,9 @@ public class DishController {
         return R.success(pageInfo);
     }
 
+    /**
+     * 新建菜品
+     * */
     @PostMapping
     public R<String> save(@RequestBody Dish dish){
         log.info("dish: {}",dish.toString());
@@ -44,4 +47,12 @@ public class DishController {
         return R.success("添加菜品成功");
     }
 
+    /**
+     * 根据ID修改菜品
+     * */
+    @GetMapping
+    public R<String> updata(@RequestBody Dish dish){
+        dishService.updateById(dish);
+        return R.success("修改菜品成功");
+    }
 }
