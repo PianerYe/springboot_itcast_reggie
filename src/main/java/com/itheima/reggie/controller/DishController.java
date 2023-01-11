@@ -3,6 +3,7 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
+import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.service.DishFlavorService;
@@ -46,9 +47,9 @@ public class DishController {
      * 新建菜品
      * */
     @PostMapping
-    public R<String> save(@RequestBody Dish dish){
-        log.info("dish: {}",dish.toString());
-        dishService.save(dish);
+    public R<String> save(@RequestBody DishDto dishDto){
+        log.info("dishDto: {}",dishDto.toString());
+        dishService.save(dishDto);
         return R.success("添加菜品成功");
     }
 
