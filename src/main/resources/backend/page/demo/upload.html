@@ -46,7 +46,7 @@
               //为模型数据imagUrl赋值，用于图片预览
               // console(this.imageUrl)
               // alert(response.data);
-              this.imageUrl = response.data;
+              this.imageUrl = response.data[0];
           },
           beforeUpload (file) {
             if(file){

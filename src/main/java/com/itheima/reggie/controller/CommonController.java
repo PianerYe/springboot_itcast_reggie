@@ -29,7 +29,7 @@ public class CommonController {
      * 文件上传
      * */
     @PostMapping("/upload")
-    public R<String> upload(@RequestParam("imgFile") MultipartFile imgFile){
+    public R<String[]> upload(@RequestParam("imgFile") MultipartFile imgFile){
         //file是一个临时文件，需要转存到指定位置，否则本次请求完成后临时文件会删除
         log.info(imgFile.toString());
 
@@ -60,14 +60,14 @@ public class CommonController {
             throw new RuntimeException(e);
         }
         log.info(fileName.toString());
-        return R.success(basePath + File.separator +fileName);
+        return R.success(new String[]{basePath + File.separator + fileName, fileName});
     }
 
     /**
      * 文件下载
      * */
-    @GetMapping("/download")
-    public void download(String name, HttpServletResponse response){
+//    @GetMapping("/download")
+//    public void download(String name, HttpServletResponse response){
         /*//输入流，通过输入流读取文件内容
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(basePath + File.separator +name));
@@ -92,5 +92,5 @@ public class CommonController {
             throw new RuntimeException(e);
         }*/
 
-    }
+//    }
 }
