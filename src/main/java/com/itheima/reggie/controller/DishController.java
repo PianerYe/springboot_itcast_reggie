@@ -25,7 +25,7 @@ public class DishController {
     @Autowired
     private DishFlavorService dishFlavorService;
     /**
-     * 分页查询
+     * 菜品信息分页查询
      * */
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
@@ -37,7 +37,7 @@ public class DishController {
         //添加过滤条件
         queryWrapper.like(StringUtils.isNotEmpty(name),Dish::getName,name);
         //添加排序条件,根据sort升序排序
-        queryWrapper.orderByAsc(Dish::getSort);
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         //执行查询
         dishService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
