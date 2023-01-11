@@ -50,7 +50,7 @@ public class DishController {
     public R<String> save(@RequestBody DishDto dishDto){
         log.info("dishDto: {}",dishDto.toString());
 
-        dishService.save(dishDto);
+        dishService.saveWithFlavor(dishDto);
         return R.success("添加菜品成功");
     }
 
