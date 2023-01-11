@@ -47,7 +47,7 @@ public class DishController {
         //添加过滤条件
         queryWrapper.like(StringUtils.isNotEmpty(name),Dish::getName,name);
         //添加排序条件,根据sort升序排序
-        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        queryWrapper.orderByDesc(Dish::getUpdateTime);
         //执行查询
         dishService.page(pageInfo,queryWrapper);
 
@@ -61,8 +61,11 @@ public class DishController {
             Long categoryId = item.getCategoryId();//分类id
             //根据id查询分类对象
             Category category = categoryService.getById(categoryId);
-            String categoryName = category.getName();
-            dishDto.setCategoryName(categoryName);
+            if (category != null){
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
+
             return dishDto;
         }).collect(Collectors.toList());
 
