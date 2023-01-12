@@ -464,7 +464,7 @@
                     if (res.code === 1) {
                       this.$message.success('菜品添加成功！')
                       if (!st) {
-                        this.goBack()
+                        this.goBack('菜品添加成功！')
                       } else {
                         this.dishFlavors = []
                         // this.dishFlavorsData = []
@@ -491,8 +491,8 @@
                   delete params.updateTime
                   editDish(params).then(res => {
                     if (res.code === 1) {
-                      this.$message.success('菜品修改成功！')
-                      this.goBack()
+                      // this.$message.success('菜品修改成功！')
+                      this.goBack('菜品修改成功！')
                     } else {
                       this.$message.error(res.msg || '操作失败')
                     }
@@ -534,12 +534,12 @@
             }
           },
           
-          goBack(){
+          goBack(msg){
             window.parent.menuHandle({
               id: '4',
               url: '/backend/page/food/list.html',
               name: '菜品管理'
-            },false)
+            },false,msg)
           }
         }
       })
