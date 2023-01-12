@@ -40,4 +40,11 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //保存菜品口味数据到菜品口味表dish_flavors
         dishFlavorService.saveBatch(flavors);
     }
+
+    @Override
+    public void getByIdWithFlavor(Long id) {
+        //根据ID先查询菜品信息
+
+        //根据ID查询口味信息，封装成集合
+    }
 }

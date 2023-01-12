@@ -86,11 +86,13 @@ public class DishController {
     }
 
     /**
-     * 根据ID修改菜品
+     * 根据ID菜品数据回显到表单
      * */
-    @GetMapping
-    public R<String> updata(@RequestBody Dish dish){
-        dishService.updateById(dish);
+    @GetMapping("/{id}")
+    public R<String> updata(@PathVariable Long id){
+        log.info("根据id查询菜品信息...");
+        //根据id查询菜品信息数据以及菜品口味信息数据，然后回显
+
         return R.success("修改菜品成功");
     }
 }
