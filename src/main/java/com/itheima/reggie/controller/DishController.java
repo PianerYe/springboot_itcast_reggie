@@ -84,6 +84,11 @@ public class DishController {
         dishService.saveWithFlavor(dishDto);
         return R.success("添加菜品成功");
     }
+    @PutMapping
+    public R<String> updata(@RequestBody DishDto dishDto){
+        dishService.updataWithFalvor(dishDto);
+        return null;
+    }
 
     /**
      * 根据ID菜品数据回显到表单
