@@ -8,12 +8,15 @@ import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.mapper.DishMapper;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
+import com.itheima.reggie.utils.QiniuUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Autowired
     private DishFlavorService dishFlavorService;
+    @Value("${reggie.path}")
+    private String basePath;
     /**
      * 新增菜品同时保存对应的口味数据
      * */
@@ -59,7 +64,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
+    @Transactional
     public void updataWithFalvor(DishDto dishDto) {
+        //先移除菜品对应的网络图片信息
+        Dish dish = this.getById(dishDto.getId());
+//        String fileName = basePath + File.separator + dish.getImage();
+        QiniuUtils.deleteFileFromQiniu(dish.getImage());
         //更新dish表基本信息
         this.updateById(dishDto);
         //清理当前菜品对应的口味数据---dish_flavor表的delete操作
@@ -75,5 +85,21 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }).collect(Collectors.toList());
 
         dishFlavorService.saveBatch(flavors);
+    }
+
+    @Transactional
+    @Override
+    public void deleteWithFlavor(String id) {
+        //1.清理当前菜品对应的口味数据---dish_flavor表的delete操作
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DishFlavor::getDishId,id);
+        dishFlavorService.remove(queryWrapper);
+        //2.清理当前菜品数据信息
+        //2.先移除菜品对应的网络图片信息
+        Dish dish = this.getById(id);
+//        String fileName = basePath + File.separator + dish.getImage();
+        QiniuUtils.deleteFileFromQiniu(dish.getImage());
+        //然后移除菜品
+        this.removeById(id);
     }
 }
