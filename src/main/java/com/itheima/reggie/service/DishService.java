@@ -14,4 +14,8 @@ public interface DishService extends IService<Dish> {
     public void updataWithFalvor(DishDto dishDto);
 
     public void deleteWithFlavor(String id);
+
+    public Dish updateStatus0(String statusId);
+
+    public Dish updateStatus1(String statusId);
 }

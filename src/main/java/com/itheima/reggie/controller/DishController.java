@@ -6,7 +6,6 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
-import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.DishFlavorService;
@@ -19,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,13 +107,33 @@ public class DishController {
     }
 
     /**修改菜品禁售状态*/
-    @PostMapping("/status")
-    public R<String> update(HttpServletRequest request,@RequestBody DishDto dishDto){
-        log.info("是否启售{}",dishDto.getStatus());
-        return null;
+    @PostMapping("/status/0")
+    public R<List<Dish>> updateStatus0(String ids){
+        log.info("传递的ids:{}",ids);
+        String[] statusIds = ids.split(",");
+        List<Dish> dishList = new ArrayList<>();
+        for (String statusId: statusIds) {
+            Dish dish = dishService.updateStatus0(statusId);
+            dishList.add(dish);
+        }
+        return R.success(dishList);
     }
+
+    /**修改菜品启售状态*/
+    @PostMapping("/status/1")
+    public R<List<Dish>> updateStatus1(String ids){
+        log.info("传递的ids:{}",ids);
+        String[] statusIds = ids.split(",");
+        List<Dish> dishList = new ArrayList<>();
+        for (String statusId: statusIds) {
+            Dish dish = dishService.updateStatus1(statusId);
+            dishList.add(dish);
+        }
+        return R.success(dishList);
+    }
+
     /**
-     * 删除和批量删除
+     * 删除和批量删除菜品
      * */
     @Transactional
     @DeleteMapping

@@ -12,11 +12,9 @@ import com.itheima.reggie.utils.QiniuUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +25,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Autowired
     private DishFlavorService dishFlavorService;
-    @Value("${reggie.path}")
-    private String basePath;
+//    @Value("${reggie.path}")
+//    private String basePath;
     /**
      * 新增菜品同时保存对应的口味数据
      * */
@@ -101,5 +99,21 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         QiniuUtils.deleteFileFromQiniu(dish.getImage());
         //然后移除菜品
         this.removeById(id);
+    }
+
+    @Override
+    public Dish updateStatus0(String statusId) {
+        Dish dish = this.getById(statusId);
+        dish.setStatus(0);
+        this.updateById(dish);
+        return dish;
+    }
+
+    @Override
+    public Dish updateStatus1(String statusId) {
+        Dish dish = this.getById(statusId);
+        dish.setStatus(1);
+        this.updateById(dish);
+        return dish;
     }
 }
