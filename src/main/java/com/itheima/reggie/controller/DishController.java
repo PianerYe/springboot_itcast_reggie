@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -155,5 +156,18 @@ public class DishController {
             dishService.deleteWithFlavor(id);
         }
         return R.success("菜品删除成功");
+    }
+
+    @GetMapping("/list")
+    public R<List<Dish>> list(Long categoryId){
+        log.info("categoryId:{}",categoryId);
+        //条件构造器
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        //添加条件
+        queryWrapper.eq(Dish::getCategoryId,categoryId);
+        //添加排序条件
+        queryWrapper.orderByAsc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
     }
 }
