@@ -60,7 +60,8 @@
         ></el-table-column>
         <el-table-column prop="image" label="图片"  align="center">
           <template slot-scope="{ row }">
-            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ `/common/download?name=${row.image}` ]" >
+<!--            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ `/common/download?name=${row.image}` ]" >-->
+              <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[basePath+row.image]" >
               <div slot="error" class="image-slot">
                 <img src="./../../images/noImg.png"  style="width: auto; height: 40px; border:none;" >
               </div> 
@@ -153,7 +154,8 @@
              pageSize: 10,
              tableData : [],
              dishState : '',
-             checkList: []
+             checkList: [],
+             basePath: 'http://ro9vewbi9.hd-bkt.clouddn.com/'
           }
         },
         computed: {},
@@ -179,7 +181,8 @@
             })
           },
           getImage (image) {
-            return `/common/download?name=${image}`
+            return this.basePath + image
+            // return `/common/download?name=${image}`
           },
           handleQuery() {
             this.page = 1;
