@@ -79,4 +79,11 @@ public class SetmealController {
         SetmealDto setmealDto = setmealService.getByIdWithDish(id);
         return R.success(setmealDto);
     }
+
+    @PutMapping
+    public R<String> updata(@RequestBody SetmealDto setmealDto){
+        log.info("setmealDto:{}",setmealDto);
+        setmealService.updateWithDish(setmealDto);
+        return R.success("套餐修改成功");
+    }
 }

@@ -7,7 +7,7 @@ import com.itheima.reggie.entity.Setmeal;
 public interface SetmealService extends IService<Setmeal> {
     public void saveWithSetmealDish(SetmealDto setmealDto);
 
-    public SetmealDto updateWithDish(Long id);
+    public void updateWithDish(SetmealDto setmealDto);
 
     public SetmealDto getByIdWithDish(Long id);
 }
