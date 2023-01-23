@@ -556,7 +556,7 @@
                       if (res.code === 1) {
                         this.$message.success('套餐添加成功！')
                         if (!st) {
-                          this.goBack()
+                          this.goBack('套餐添加成功！')
                         } else {
                           this.$refs.ruleForm.resetFields()
                           this.dishList = []
@@ -588,7 +588,7 @@
                     .then((res) => {
                       if (res.code === 1) {
                         this.$message.success('套餐修改成功！')
-                        this.goBack()
+                        this.goBack('套餐修改成功！')
                       } else {
                         this.$message.error(res.msg || '操作失败')
                       }
@@ -630,14 +630,14 @@
               return file
             }
           },
-          goBack() {
+          goBack(msg) {
             window.parent.menuHandle(
               {
                 id: '5',
                 url: '/backend/page/combo/list.html',
                 name: '套餐管理',
               },
-              false
+              false,msg
             )
           },
           // 获取套餐分类

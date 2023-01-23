@@ -43,10 +43,15 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
     @Transactional
     @Override
     public void updateWithDish(SetmealDto setmealDto) {
-        //先移除菜品对应的网络图片信息
+        //先判断菜品对应的图片信息是否做出修改
         Setmeal setmeal = this.getById(setmealDto.getId());
-//        String fileName = basePath + File.separator + dish.getImage();
-        QiniuUtils.deleteFileFromQiniu(setmeal.getImage());
+        log.info("图片测试！！！！！{}:::::{}",setmeal.getImage(),setmealDto.getImage());
+        if (setmeal.getImage() != null && (! setmeal.getImage().equals(setmealDto.getImage()))){
+            //移除菜品对应的网络图片信息
+            //String fileName = basePath + File.separator + dish.getImage();
+            QiniuUtils.deleteFileFromQiniu(setmeal.getImage());
+        }
+
         //修改套餐数据
         this.updateById(setmealDto);
         //获取菜品数据信息

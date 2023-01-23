@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
+import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.mapper.DishMapper;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
@@ -64,10 +65,15 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Override
     @Transactional
     public void updataWithFalvor(DishDto dishDto) {
-        //先移除菜品对应的网络图片信息
+        //先判断菜品对应的图片信息是否做出修改
         Dish dish = this.getById(dishDto.getId());
-//        String fileName = basePath + File.separator + dish.getImage();
-        QiniuUtils.deleteFileFromQiniu(dish.getImage());
+        log.info("图片测试！！！！！{}:::::{}",dish.getImage(),dishDto.getImage());
+        if (dish.getImage() != null && (! dish.getImage().equals(dishDto.getImage()))){
+            //移除菜品对应的网络图片信息
+            //String fileName = basePath + File.separator + dish.getImage();
+            QiniuUtils.deleteFileFromQiniu(dish.getImage());
+        }
+
         //更新dish表基本信息
         this.updateById(dishDto);
         //清理当前菜品对应的口味数据---dish_flavor表的delete操作
