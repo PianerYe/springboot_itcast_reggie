@@ -60,11 +60,23 @@ public class SetmealController {
 
         return R.success(setmealDtoPage);
     }
+    /**
+     * 添加套餐
+     * */
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("setmealDto: {}",setmealDto.toString());
 
         setmealService.saveWithSetmealDish(setmealDto);
         return R.success("添加套餐成功");
+    }
+    /**
+     * 修改套餐
+     * */
+    @GetMapping("/{id}")
+    public R<SetmealDto> updata(@PathVariable Long id){
+        log.info("根据id查询套餐信息...{}",id);
+        SetmealDto setmealDto = setmealService.getByIdWithDish(id);
+        return R.success(setmealDto);
     }
 }
