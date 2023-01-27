@@ -119,7 +119,7 @@ public class SetmealController {
     }
 
 
-    /**修改套餐禁售状态*/
+    //**修改套餐禁售状态*//*
     @PostMapping("/status/0")
     public R<List<Setmeal>> updateStatus0(String ids){
         log.info("传递的ids:{}",ids);
@@ -132,7 +132,7 @@ public class SetmealController {
         return R.success(setmealList);
     }
 
-    /**修改菜品启售状态*/
+    //**修改菜品启售状态*//*
     @PostMapping("/status/1")
     public R<List<Setmeal>> updateStatus1(String ids){
         log.info("传递的ids:{}",ids);
@@ -144,4 +144,6 @@ public class SetmealController {
         }
         return R.success(setmealList);
     }
+
+
 }

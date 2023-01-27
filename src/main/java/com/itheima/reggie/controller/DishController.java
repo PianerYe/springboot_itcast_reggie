@@ -135,7 +135,7 @@ public class DishController {
 
     /**
      * 删除和批量删除菜品
-     * */
+     * *//*
     @Transactional
     @DeleteMapping
     public R<String> delete(String ids){
@@ -156,7 +156,7 @@ public class DishController {
             dishService.deleteWithFlavor(id);
         }
         return R.success("菜品删除成功");
-    }
+    }*/
 
     @GetMapping("/list")
     public R<List<Dish>> list(Dish dish){
@@ -171,5 +171,30 @@ public class DishController {
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
         return R.success(list);
+    }
+
+    /**
+     * 删除和批量删除菜品
+     * */
+    @Transactional
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        log.info("ids:{}",ids);
+        if (ids == null){
+            return R.error("没有选择删除的菜品");
+        }
+
+        for (Long id: ids) {
+            //判断要删除的菜品ID是否和套餐关联
+            LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SetmealDish::getDishId,id);
+            SetmealDish setmealDish = setmealDishService.getOne(queryWrapper);
+            if (setmealDish != null){
+                return R.error("菜品和套餐关联，无法删除");
+            }
+            //执行删除，先删除菜品信息，然后清理当前菜品对应的口味数据
+            dishService.removeWithFlavor(ids);
+        }
+        return R.success("菜品删除成功");
     }
 }

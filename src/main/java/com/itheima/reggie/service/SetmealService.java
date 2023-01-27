@@ -21,4 +21,5 @@ public interface SetmealService extends IService<Setmeal> {
     public Setmeal updateStatus1(String statusId);
 
     public void removeWithDish(List<Long> ids);
+
 }

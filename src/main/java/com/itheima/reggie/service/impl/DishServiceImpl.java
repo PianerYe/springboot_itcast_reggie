@@ -2,6 +2,7 @@ package com.itheima.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
@@ -123,4 +124,30 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         this.updateById(dish);
         return dish;
     }
+
+    @Transactional
+    @Override
+    public void removeWithFlavor(List<Long> ids) {
+        //
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Dish::getId,ids);
+        lambdaQueryWrapper.eq(Dish::getStatus,1);
+        int count = this.count(lambdaQueryWrapper);
+        if (count >0){
+            throw new CustomException("菜品正在售卖中，不能删除");
+        }
+        //1.清理当前菜品对应的口味数据---dish_flavor表的delete操作
+        //2.先移除菜品对应的网络图片信息
+        for (Long id:ids){
+            Dish dish = this.getById(id);
+            QiniuUtils.deleteFileFromQiniu(dish.getImage());
+        }
+        //然后移除菜品
+        this.removeByIds(ids);
+        //3.清理当前菜品数据信息
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(DishFlavor::getDishId,ids);
+        dishFlavorService.remove(queryWrapper);
+    }
+
 }
