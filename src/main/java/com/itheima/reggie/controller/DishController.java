@@ -159,14 +159,16 @@ public class DishController {
     }
 
     @GetMapping("/list")
-    public R<List<Dish>> list(Long categoryId){
-        log.info("categoryId:{}",categoryId);
+    public R<List<Dish>> list(Dish dish){
+        log.info("categoryId:{}",dish.getCategoryId());
         //条件构造器
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         //添加条件
-        queryWrapper.eq(Dish::getCategoryId,categoryId);
+        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        //查询状态是1的的菜品
+        queryWrapper.eq(Dish::getStatus,1);
         //添加排序条件
-        queryWrapper.orderByAsc(Dish::getUpdateTime);
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
         return R.success(list);
     }

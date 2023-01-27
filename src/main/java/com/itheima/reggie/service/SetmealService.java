@@ -5,6 +5,8 @@ import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 
+import java.util.List;
+
 public interface SetmealService extends IService<Setmeal> {
     public void saveWithSetmealDish(SetmealDto setmealDto);
 
@@ -17,4 +19,6 @@ public interface SetmealService extends IService<Setmeal> {
     public Setmeal updateStatus0(String statusId);
 
     public Setmeal updateStatus1(String statusId);
+
+    public void removeWithDish(List<Long> ids);
 }

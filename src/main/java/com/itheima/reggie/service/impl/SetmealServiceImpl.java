@@ -2,8 +2,8 @@ package com.itheima.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.dto.SetmealDto;
-import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.mapper.SetmealMapper;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Slf4j
-public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
+public class  SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
     @Autowired
     private SetmealDishService setmealDishService;
     @Override
@@ -113,4 +113,32 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
         this.updateById(setmeal);
         return setmeal;
     }
+
+    @Transactional
+    @Override
+    public void removeWithDish(List<Long> ids) {
+        //查询套餐状态，确定是否可以删除
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId,ids);
+        queryWrapper.eq(Setmeal::getStatus,1);
+        int count = this.count(queryWrapper);
+        //如果不可以删除，抛出一个业务异常
+        if (count>0){
+            throw new CustomException("套餐正在售卖中，不能删除");
+        }
+        //如果可以删除，先删除套餐表中的数据
+        //移除套餐对应的网络图片信息
+        for (Long id:ids){
+            Setmeal setmeal = this.getById(id);
+            QiniuUtils.deleteFileFromQiniu(setmeal.getImage());
+        }
+
+        this.removeByIds(ids);
+        //删除关系表中的数据
+        LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(SetmealDish::getSetmealId,ids);
+        setmealDishService.remove(lambdaQueryWrapper);
+    }
+
+
 }
