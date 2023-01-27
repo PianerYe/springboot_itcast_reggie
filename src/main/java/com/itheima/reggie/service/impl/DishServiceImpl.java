@@ -32,6 +32,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * 新增菜品同时保存对应的口味数据
      * */
     @Override
+    @Transactional
     public void saveWithFlavor(DishDto dishDto) {
         //保存菜品的基本信息到菜品表dish
         this.save(dishDto);

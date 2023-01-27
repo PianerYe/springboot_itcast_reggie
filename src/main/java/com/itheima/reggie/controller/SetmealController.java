@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Category;
+import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.SetmealService;
@@ -14,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,5 +87,46 @@ public class SetmealController {
         log.info("setmealDto:{}",setmealDto);
         setmealService.updateWithDish(setmealDto);
         return R.success("套餐修改成功");
+    }
+
+    @DeleteMapping()
+    public R<String> delete(String ids){
+        log.info("ids:{}",ids);
+
+        if (ids == null){
+            return R.error("没有选择要删除的套餐");
+        }
+        String[] deleteids = ids.split(",");
+        for (String id: deleteids) {
+            //执行删除，先删除套餐信息，然后清理当前套餐对应的菜品数据
+            setmealService.deleteWithDish(id);
+        }
+        return R.success("套餐删除成功");
+    }
+
+    /**修改套餐禁售状态*/
+    @PostMapping("/status/0")
+    public R<List<Setmeal>> updateStatus0(String ids){
+        log.info("传递的ids:{}",ids);
+        String[] statusIds = ids.split(",");
+        List<Setmeal> setmealList = new ArrayList<>();
+        for (String statusId: statusIds) {
+            Setmeal setmeal = setmealService.updateStatus0(statusId);
+            setmealList.add(setmeal);
+        }
+        return R.success(setmealList);
+    }
+
+    /**修改菜品启售状态*/
+    @PostMapping("/status/1")
+    public R<List<Setmeal>> updateStatus1(String ids){
+        log.info("传递的ids:{}",ids);
+        String[] statusIds = ids.split(",");
+        List<Setmeal> setmealList = new ArrayList<>();
+        for (String statusId: statusIds) {
+            Setmeal setmeal = setmealService.updateStatus1(statusId);
+            setmealList.add(setmeal);
+        }
+        return R.success(setmealList);
     }
 }

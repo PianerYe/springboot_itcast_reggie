@@ -19,12 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @Slf4j
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
     @Autowired
     private SetmealDishService setmealDishService;
     @Override
+    @Transactional
     public void saveWithSetmealDish(SetmealDto setmealDto) {
         //保存菜品的基本信息到套餐表setmeal
         this.save(setmealDto);
@@ -80,5 +82,35 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
         setmealDto.setSetmealDishes(setmealDishes);
 
         return setmealDto;
+    }
+
+    @Transactional
+    @Override
+    public void deleteWithDish(String id) {
+        //移除套餐对应的网络图片信息
+        Setmeal setmeal = this.getById(id);
+        QiniuUtils.deleteFileFromQiniu(setmeal.getImage());
+        //先删除套餐下对应的菜品信息
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId,id);
+        setmealDishService.remove(queryWrapper);
+        //再删除套餐信息
+        this.removeById(id);
+    }
+
+    @Override
+    public Setmeal updateStatus0(String statusId) {
+        Setmeal setmeal = this.getById(statusId);
+        setmeal.setStatus(0);
+        this.updateById(setmeal);
+        return setmeal;
+    }
+
+    @Override
+    public Setmeal updateStatus1(String statusId) {
+        Setmeal setmeal = this.getById(statusId);
+        setmeal.setStatus(1);
+        this.updateById(setmeal);
+        return setmeal;
     }
 }
