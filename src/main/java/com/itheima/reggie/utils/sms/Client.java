@@ -20,7 +20,7 @@ public class Client {
     private String version;
     private String signType;
 
-    Client() {
+    public Client() {
         this.timestamp = System.currentTimeMillis();
         this.version = "1.0";
         this.signType = "md5";
