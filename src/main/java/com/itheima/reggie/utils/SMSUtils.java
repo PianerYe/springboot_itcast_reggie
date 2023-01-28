@@ -16,7 +16,7 @@ public class SMSUtils {
 //        request.setMethod(method);
 //        String code = ValidateCodeUtils.generateValidateCode4String(4);
 //        Integer code = ValidateCodeUtils.generateValidateCode(4);
-//        System.out.println(code);
+        System.out.println(code);
 
         request.setBizContent("{\"mobile\":[\"" +
                 ""+ telephone +"\"]," +
@@ -26,7 +26,7 @@ public class SMSUtils {
         // 这里是json字符串，send_time 为空时可以为null, params 为空时可以为null,短信签名填写审核后的签名本身，不需要填写签名id
 
 
-//        System.out.println( client.execute(request) );
+        System.out.println( client.execute(request) );
 
     }
 

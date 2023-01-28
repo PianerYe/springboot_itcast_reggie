@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @Slf4j
 @RequestMapping("user")
@@ -23,7 +25,7 @@ public class UserController {
      * 发送手机短信验证码
      * */
     @PostMapping("/sendMsg")
-    public R<String> sendMsg(@RequestBody User user){
+    public R<String> sendMsg(@RequestBody User user, HttpSession session){
         log.info("user: {}",user);
         //先判断电话号码不为空
         if (user.getPhone() == null){
@@ -38,10 +40,11 @@ public class UserController {
         }
 
         //随机生成一个6位数字验证码
-        Integer validateCode = ValidateCodeUtils.generateValidateCode(6);
+        String code = ValidateCodeUtils.generateValidateCode(6).toString();
         //给用户发送验证码
-        SMSUtils.sendShortMessage(6, user.getPhone());
-
-        return null;
+        SMSUtils.sendShortMessage(Integer.parseInt(code), user.getPhone());
+        //将生成的验证码保存到Session中
+        session.setAttribute(user.getPhone(),code);
+        return R.success("手机验证码发送成功");
     }
 }
