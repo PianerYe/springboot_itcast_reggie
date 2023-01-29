@@ -3,11 +3,14 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
+import com.itheima.reggie.dto.SetmealDishDto;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Category;
+import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.service.CategoryService;
+import com.itheima.reggie.service.DishService;
 import com.itheima.reggie.service.SetmealDishService;
 import com.itheima.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,8 @@ public class SetmealController {
     private CategoryService categoryService;
     @Autowired
     private SetmealDishService setmealDishService;
+    @Autowired
+    private DishService dishService;
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
@@ -194,9 +199,23 @@ public class SetmealController {
         return R.success(setmealDtoList);
     }*/
 
-    @GetMapping("/dish")
-    public R<String> dish(Setmeal setmeal){
-        return null;
+    @GetMapping("/dish/{id}")
+    public R<List<SetmealDishDto>> dish(@PathVariable Long id){
+        log.info("setmealId:{}",id);
+
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId,id);
+        List<SetmealDish> list = setmealDishService.list(queryWrapper);
+        List<SetmealDishDto> setmealDishDtos = list.stream().map((item) -> {
+            SetmealDishDto setmealDishDto = new SetmealDishDto();
+            BeanUtils.copyProperties(item, setmealDishDto);
+            Long dishId = item.getDishId();
+            Dish dish = dishService.getById(dishId);
+            setmealDishDto.setImage(dish.getImage());
+            return setmealDishDto;
+        }).collect(Collectors.toList());
+
+        return R.success(setmealDishDtos);
     }
 
 }
