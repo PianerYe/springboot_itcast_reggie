@@ -206,8 +206,16 @@ public class DishController {
             DishDto dishDto = new DishDto();
 
             BeanUtils.copyProperties(item,dishDto);
-            Long dishId = item.getId();
+
             //根据id查询分类对象
+            Category category = categoryService.getById(item.getCategoryId());
+            if (category != null){
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
+
+            Long dishId = item.getId();
+            //根据id查询菜品口味数据
             LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(DishFlavor::getDishId,dishId);
             List<DishFlavor> dishFlavors = dishFlavorService.list(lambdaQueryWrapper);
