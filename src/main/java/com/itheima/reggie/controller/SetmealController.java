@@ -6,7 +6,9 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Setmeal;
+import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.service.CategoryService;
+import com.itheima.reggie.service.SetmealDishService;
 import com.itheima.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,8 @@ public class SetmealController {
     private SetmealService setmealService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private SetmealDishService setmealDishService;
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
@@ -159,6 +163,40 @@ public class SetmealController {
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
         List<Setmeal> list = setmealService.list(queryWrapper);
         return R.success(list);
+    }
+
+/*    @GetMapping("/list")
+    public R<List<SetmealDto>> list(Setmeal setmeal){
+        log.info("categoryId:{}",setmeal.getCategoryId());
+        //条件构造器
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        //添加条件
+        queryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        //查询状态是1的的菜品
+        queryWrapper.eq(Setmeal::getStatus,1);
+        //添加排序条件
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> list = setmealService.list(queryWrapper);
+
+        List<SetmealDto> setmealDtoList = list.stream().map((item)->{
+            SetmealDto setmealDto = new SetmealDto();
+            BeanUtils.copyProperties(item,setmealDto);
+
+            Long setmealId = item.getId();
+            //根据id查询分类对象
+            LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(SetmealDish::getSetmealId,setmealId);
+            List<SetmealDish> setmealDishes = setmealDishService.list(lambdaQueryWrapper);
+            setmealDto.setSetmealDishes(setmealDishes);
+
+            return setmealDto;
+        }).collect(Collectors.toList());
+        return R.success(setmealDtoList);
+    }*/
+
+    @GetMapping("/dish")
+    public R<String> dish(Setmeal setmeal){
+        return null;
     }
 
 }

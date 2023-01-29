@@ -6,6 +6,7 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
+import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.DishFlavorService;
@@ -158,20 +159,20 @@ public class DishController {
         return R.success("菜品删除成功");
     }*/
 
-    @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
-        log.info("categoryId:{}",dish.getCategoryId());
-        //条件构造器
-        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        //添加条件
-        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
-        //查询状态是1的的菜品
-        queryWrapper.eq(Dish::getStatus,1);
-        //添加排序条件
-        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-        List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
-    }
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(Dish dish){
+//        log.info("categoryId:{}",dish.getCategoryId());
+//        //条件构造器
+//        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+//        //添加条件
+//        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+//        //查询状态是1的的菜品
+//        queryWrapper.eq(Dish::getStatus,1);
+//        //添加排序条件
+//        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//        List<Dish> list = dishService.list(queryWrapper);
+//        return R.success(list);
+//    }
 
     /**
      * 删除和批量删除菜品
@@ -186,5 +187,35 @@ public class DishController {
         //执行删除，先删除菜品信息，然后清理当前菜品对应的口味数据
         dishService.removeWithFlavor(ids);
         return R.success("菜品删除成功");
+    }
+
+    @GetMapping("/list")
+    public R<List<DishDto>> list(Dish dish){
+        log.info("categoryId:{}",dish.getCategoryId());
+        //条件构造器
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        //添加条件
+        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        //查询状态是1的的菜品
+        queryWrapper.eq(Dish::getStatus,1);
+        //添加排序条件
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+
+        List<DishDto> dtoList = list.stream().map((item)->{
+            DishDto dishDto = new DishDto();
+
+            BeanUtils.copyProperties(item,dishDto);
+            Long dishId = item.getId();
+            //根据id查询分类对象
+            LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(DishFlavor::getDishId,dishId);
+            List<DishFlavor> dishFlavors = dishFlavorService.list(lambdaQueryWrapper);
+
+            dishDto.setFlavors(dishFlavors);
+
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dtoList);
     }
 }
