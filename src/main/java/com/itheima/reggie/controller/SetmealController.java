@@ -146,4 +146,19 @@ public class SetmealController {
     }
 
 
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal){
+        log.info("categoryId:{}",setmeal.getCategoryId());
+        //条件构造器
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        //添加条件
+        queryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        //查询状态是1的的菜品
+        queryWrapper.eq(Setmeal::getStatus,1);
+        //添加排序条件
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> list = setmealService.list(queryWrapper);
+        return R.success(list);
+    }
+
 }
