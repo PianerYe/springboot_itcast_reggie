@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -35,7 +36,8 @@ public class UserController {
         //随机生成一个6位数字验证码
         String code = ValidateCodeUtils.generateValidateCode(6).toString();
         //给用户发送验证码
-        SMSUtils.sendShortMessage(Integer.parseInt(code), user.getPhone());
+        System.out.println(code);
+//        SMSUtils.sendShortMessage(Integer.parseInt(code), user.getPhone());  //为了省钱，不再发了
         //将生成的验证码保存到Session中
         session.setAttribute(user.getPhone(),code);
         return R.success("手机验证码发送成功");
@@ -72,5 +74,12 @@ public class UserController {
 
         }
         return R.error("登录失败");
+    }
+
+    @PostMapping("/loginout")
+    public R<String> login(HttpServletRequest request){
+        //清理session中保存的当前登录的用户ID
+        request.getSession().removeAttribute("user");
+        return R.success("退出成功");
     }
 }
