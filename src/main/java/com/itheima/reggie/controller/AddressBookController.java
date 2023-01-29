@@ -94,4 +94,25 @@ public class AddressBookController {
 
         return R.success(list);
     }
+
+    /**
+     * 修改地址信息
+     * */
+    @PutMapping
+    public R<String> update(@RequestBody AddressBook addressBook){
+        log.info("addressBook:{}",addressBook);
+
+        addressBookService.updateById(addressBook);
+        return R.success("地址修改成功");
+    }
+
+    /**
+     * 删除地址
+     * */
+    @DeleteMapping
+    public R<String> delete(Long ids){
+        log.info("ids:{}",ids);
+        addressBookService.removeById(ids);
+        return R.success("地址删除成功");
+    }
 }
