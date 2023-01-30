@@ -58,4 +58,49 @@ public class ShoppingCartController {
         }
         return R.success(cartServiceOne);
     }
+
+    /**
+     * 购物车商品数量减少
+     * */
+    @PostMapping("/sub")
+    public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
+        //查询当前菜品或者套餐是否在购物车中
+        Long dishId = shoppingCart.getDishId();
+
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        if (dishId != null){
+            //减1到购物车的菜品
+            queryWrapper.eq(ShoppingCart::getDishId,dishId);
+            ShoppingCart shoppingCartDish = shoppingCartService.getOne(queryWrapper);
+            Integer number = shoppingCartDish.getNumber();
+            if (number >1){
+                number = number - 1;
+                shoppingCartDish.setNumber(number);
+                shoppingCartService.updateById(shoppingCartDish);
+            }else if (number == 1){
+                //
+                shoppingCartService.removeById(shoppingCartDish.getId());
+                shoppingCartDish.setNumber(0);
+            }
+            return R.success(shoppingCartDish);
+        }else {
+            //添加到购物车的是套餐
+            Long setmealId = shoppingCart.getSetmealId();
+            queryWrapper.eq(ShoppingCart::getSetmealId,setmealId);
+            ShoppingCart shoppingCartSetmeal = shoppingCartService.getOne(queryWrapper);
+            Integer number = shoppingCartSetmeal.getNumber();
+            if (number >1){
+                number = number - 1;
+                shoppingCartSetmeal.setNumber(number);
+                shoppingCartService.updateById(shoppingCartSetmeal);
+            }else if (number == 1){
+                //
+                shoppingCartService.removeById(shoppingCartSetmeal.getId());
+                shoppingCartSetmeal.setNumber(0);
+            }
+            return R.success(shoppingCartSetmeal);
+        }
+
+
+    }
 }
