@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,9 +19,18 @@ public class ShoppingCartController {
 
     @Autowired
     private ShoppingCartService shoppingCartService;
+
+    /**
+     * 查看购物车
+     * */
     @GetMapping("/list")
     public R<List<ShoppingCart>> list(){
-        return null;
+        log.info("查看购物车...");
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
+        queryWrapper.orderByDesc(ShoppingCart::getCreateTime);
+        List<ShoppingCart> list = shoppingCartService.list(queryWrapper);
+        return R.success(list);
     }
 
     /**
@@ -49,10 +59,12 @@ public class ShoppingCartController {
             //如果已经存在，就在原来数量基础上+1
             Integer number = cartServiceOne.getNumber();
             cartServiceOne.setNumber(number + 1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartService.updateById(cartServiceOne);
         }else {
             //如果不存在，则添加到购物车，数量默认就是1
             shoppingCart.setNumber(1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartService.save(shoppingCart);
             cartServiceOne = shoppingCart;
         }
@@ -66,7 +78,6 @@ public class ShoppingCartController {
     public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
         //查询当前菜品或者套餐是否在购物车中
         Long dishId = shoppingCart.getDishId();
-
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         if (dishId != null){
             //减1到购物车的菜品
@@ -76,6 +87,7 @@ public class ShoppingCartController {
             if (number >1){
                 number = number - 1;
                 shoppingCartDish.setNumber(number);
+                shoppingCartDish.setCreateTime(LocalDateTime.now());
                 shoppingCartService.updateById(shoppingCartDish);
             }else if (number == 1){
                 //
@@ -92,6 +104,7 @@ public class ShoppingCartController {
             if (number >1){
                 number = number - 1;
                 shoppingCartSetmeal.setNumber(number);
+                shoppingCartSetmeal.setCreateTime(LocalDateTime.now());
                 shoppingCartService.updateById(shoppingCartSetmeal);
             }else if (number == 1){
                 //
@@ -100,7 +113,6 @@ public class ShoppingCartController {
             }
             return R.success(shoppingCartSetmeal);
         }
-
 
     }
 }
