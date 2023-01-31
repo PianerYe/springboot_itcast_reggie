@@ -97,6 +97,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         orderDetailService.saveBatch(orderDetails);
 
         //清空购物车数据
-        shoppingCarts.remove(queryWrapper);
+        shoppingCartService.remove(queryWrapper);
     }
 }
