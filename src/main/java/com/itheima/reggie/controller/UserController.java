@@ -1,6 +1,7 @@
 package com.itheima.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.User;
 import com.itheima.reggie.service.UserService;
@@ -81,5 +82,19 @@ public class UserController {
         //清理session中保存的当前登录的用户ID
         request.getSession().removeAttribute("user");
         return R.success("退出成功");
+    }
+
+    @GetMapping("/userInfo")
+    public R<User> userInfo(){
+        User userInfo = new User();
+        User user = userService.getById(BaseContext.getCurrentId());
+        if (user.getName() == null || user.getName() == ""){
+            userInfo.setName(user.getPhone());
+        }else {
+            userInfo.setName(user.getName());
+        }
+        userInfo.setSex(user.getSex());
+        log.info("!!!!!userInfo:{}",userInfo);
+        return R.success(userInfo);
     }
 }

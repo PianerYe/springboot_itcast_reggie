@@ -24,7 +24,10 @@
             <div class="divUser">
                 <img src="./../images/headPage.png"/>
                 <div class="desc">
-                    <div class="divName">林之迷 <img src="./../images/women.png"/></div>
+                    <div class="divName">{{userInfo.name}}
+                        <img v-if="userInfo.sex === '0'" src="./../images/women.png"/>
+                        <img v-else src="./../images/noImg.png"/>
+                    </div>
                     <div class="divPhone">{{userPhone}}</div>
                 </div>
             </div>
@@ -102,6 +105,10 @@
                         amount:undefined,//实收金额
                         sumNum:0,//菜品总数
                     }],
+                    userInfo:{
+                        name:'',
+                        sex:''
+                    }
                 }
             },
             computed:{},
@@ -126,6 +133,16 @@
                 },
                 initData(){
                     this.getLatestOrder()
+                    this.getUserInfo()
+                },
+                async getUserInfo(){
+                    const res = await userInfoApi()
+                    if(res.code === 1){
+                        this.userInfo.name = res.data.name
+                        this.userInfo.sex = res.data.sex
+                    }else{
+                        this.$notify({ type:'warning', message:res.msg});
+                    }
                 },
                 async getLatestOrder(){
                     const params = {

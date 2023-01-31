@@ -32,3 +32,10 @@ function orderAgainApi(data) {
       data
   })
 }
+
+function userInfoApi(){
+    return $axios({
+        'url': '/user/userInfo',
+        'method': 'get',
+    })
+}
