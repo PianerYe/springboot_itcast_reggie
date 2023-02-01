@@ -3,6 +3,8 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.OrdersDto;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -84,4 +87,34 @@ public class OrderController {
         shoppingCartService.saveWithAgain(id);
         return R.success("添加成功！");
     }
+
+    @GetMapping("/page")
+    public R<Page> page(int page,int pageSize,String number,String beginTime,String endTime){
+        log.info("page = {},pageSize = {},number = {},beginTime = {},endTime = {}",page,pageSize,number,beginTime,endTime);
+        //构造分页构造器
+        Page<Orders>  pageInfo = new Page<>(page,pageSize);
+//        Page<OrdersDto> pageInfoDto = new Page<>(page,pageSize);
+        //构造条件构造器
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        //添加过滤条件
+            queryWrapper.like(number != null,Orders::getNumber,number);
+            queryWrapper.between(beginTime != null && endTime != null, Orders::getOrderTime,beginTime,endTime);
+            queryWrapper.orderByDesc(Orders::getOrderTime);
+            ordersService.page(pageInfo,queryWrapper);
+
+        return R.success(pageInfo);
+    }
+
+    @PutMapping
+    public R<String> updatStatus(@RequestBody Orders orders){
+        log.info("orders.getId():{},orders.getStatus():{}",orders.getId(),orders.getStatus());
+        LambdaUpdateWrapper<Orders> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Orders::getId,orders.getId());
+        wrapper.set(Orders::getStatus,orders.getStatus());
+        ordersService.update(wrapper);
+
+        return R.success("订单派送中");
+
+    }
 }
+

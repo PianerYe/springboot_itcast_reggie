@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -85,8 +86,8 @@ public class AddressBookController {
 
 
     @GetMapping("/list")
-    public R<List<AddressBook>> list(AddressBook addressBook){
-        addressBook.setUserId(BaseContext.getCurrentId());
+    public R<List<AddressBook>> list(AddressBook addressBook, HttpSession session){
+        addressBook.setUserId((Long) session.getAttribute("user"));
         log.info("addressBook:{}",addressBook);
 
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();

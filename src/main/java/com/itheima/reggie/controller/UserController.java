@@ -5,7 +5,6 @@ import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.User;
 import com.itheima.reggie.service.UserService;
-import com.itheima.reggie.utils.SMSUtils;
 import com.itheima.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.util.Map;
 
 @RestController
@@ -85,10 +85,11 @@ public class UserController {
     }
 
     @GetMapping("/userInfo")
-    public R<User> userInfo(){
+    public R<User> userInfo(HttpSession session){
         User userInfo = new User();
-        User user = userService.getById(BaseContext.getCurrentId());
-        if (user.getName() == null || user.getName() == ""){
+        log.info("session.user:{}",session.getAttribute("user"));
+        User user = userService.getById((Serializable) session.getAttribute("user"));
+        if (user.getName() == null && user.getName() == ""){
             userInfo.setName(user.getPhone());
         }else {
             userInfo.setName(user.getName());
