@@ -235,7 +235,9 @@ public class DishController {
             return R.error("没有选择删除的菜品");
         }
 
-        for (Long id : ids) {
+        //推测代码冗余，优化性能建议注释掉
+       /* for (Long id : ids) {
+
             Dish dish = dishService.getById(id);
             //清理所有菜品的缓存数据
             //Set keys = redisTemplate.keys("dish_*");
@@ -244,7 +246,7 @@ public class DishController {
             //清理某个分类下面的菜品缓存数据
             String key = "dish_" + dish.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
             redisTemplate.delete(key);
-        }
+        }*/
 
         //执行删除，先删除菜品信息，然后清理当前菜品对应的口味数据
         dishService.removeWithFlavor(ids);
