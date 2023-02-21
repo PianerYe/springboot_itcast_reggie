@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -93,11 +94,29 @@ public class DishController {
         log.info("dishDto: {}",dishDto.toString());
 
         dishService.saveWithFlavor(dishDto);
+
+        //清理所有菜品的缓存数据
+        //Set keys = redisTemplate.keys("dish_*");
+        //redisTemplate.delete(keys);
+
+        //清理某个分类下面的菜品缓存数据
+        String key = "dish_" + dishDto.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
+        redisTemplate.delete(key);
+
         return R.success("添加菜品成功");
     }
     @PutMapping
     public R<String> updata(@RequestBody DishDto dishDto){
         dishService.updataWithFalvor(dishDto);
+
+        //清理所有菜品的缓存数据
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+
+        //清理某个分类下面的菜品缓存数据
+        String key = "dish_" + dishDto.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
+        redisTemplate.delete(key);
+
         return R.success("修改菜品成功");
     }
 
@@ -119,6 +138,20 @@ public class DishController {
         String[] statusIds = ids.split(",");
         List<Dish> dishList = new ArrayList<>();
         for (String statusId: statusIds) {
+            Dish dish1 = dishService.getById(statusId);
+            if (dish1.getStatus() != 0){
+                //不需要清理数据了
+                //清理所有菜品的缓存数据
+                //Set keys = redisTemplate.keys("dish_*");
+                //redisTemplate.delete(keys);
+
+                //清理某个分类下面的菜品缓存数据
+                String key = "dish_" + dish1.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
+                redisTemplate.delete(key);
+            }
+
+
+
             Dish dish = dishService.updateStatus0(statusId);
             dishList.add(dish);
         }
@@ -132,7 +165,21 @@ public class DishController {
         String[] statusIds = ids.split(",");
         List<Dish> dishList = new ArrayList<>();
         for (String statusId: statusIds) {
+            Dish dish1 = dishService.getById(statusId);
+            if (dish1.getStatus() != 1){
+                //不需要清理数据了
+                //清理所有菜品的缓存数据
+                //Set keys = redisTemplate.keys("dish_*");
+                //redisTemplate.delete(keys);
+
+                //清理某个分类下面的菜品缓存数据
+                String key = "dish_" + dish1.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
+                redisTemplate.delete(key);
+            }
+
+
             Dish dish = dishService.updateStatus1(statusId);
+
             dishList.add(dish);
         }
         return R.success(dishList);
@@ -188,8 +235,23 @@ public class DishController {
             return R.error("没有选择删除的菜品");
         }
 
+        for (Long id : ids) {
+            Dish dish = dishService.getById(id);
+            //清理所有菜品的缓存数据
+            //Set keys = redisTemplate.keys("dish_*");
+            //redisTemplate.delete(keys);
+
+            //清理某个分类下面的菜品缓存数据
+            String key = "dish_" + dish.getCategoryId() + "_1";//只要确认修改或者添加，前端都会默认传status=1的值传入后端
+            redisTemplate.delete(key);
+        }
+
         //执行删除，先删除菜品信息，然后清理当前菜品对应的口味数据
         dishService.removeWithFlavor(ids);
+
+
+
+
         return R.success("菜品删除成功");
     }
 

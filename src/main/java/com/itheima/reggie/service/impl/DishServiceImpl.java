@@ -17,6 +17,7 @@ import com.itheima.reggie.utils.QiniuUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +75,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     public void updataWithFalvor(DishDto dishDto) {
         //先判断菜品对应的图片信息是否做出修改
         Dish dish = this.getById(dishDto.getId());
+        System.out.println("前端传入菜品状态................" + dishDto.getStatus());
         log.info("图片测试！！！！！{}:::::{}",dish.getImage(),dishDto.getImage());
         if (dish.getImage() != null && (! dish.getImage().equals(dishDto.getImage()))){
             //移除菜品对应的网络图片信息
@@ -155,13 +157,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         for (Long id:ids){
             Dish dish = this.getById(id);
             QiniuUtils.deleteFileFromQiniu(dish.getImage());
+
+
         }
+
         //然后移除菜品
         this.removeByIds(ids);
         //3.清理当前菜品数据信息
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(DishFlavor::getDishId,ids);
         dishFlavorService.remove(queryWrapper);
+
+
+
     }
 
 }
