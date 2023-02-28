@@ -37,7 +37,12 @@ public class LoginCheckFilter implements Filter {
                 "/front/**",
                 "/common/**",
                 "/user/sendMsg",//移动端发送短信
-                "/user/login"  //移动端登录
+                "/user/login",  //移动端登录
+                "/doc.html",
+                "/webjars/**",
+                "/swagger-resources",
+                "/v2/api-docs"
+
         };
 
         //2.判断本次请求是否需要处理
@@ -45,7 +50,7 @@ public class LoginCheckFilter implements Filter {
 
         //3.如果不需要处理，则直接放行
         if (check){
-//            log.info("本次请求{}不需要处理",request);
+            log.info("本次请求{}不需要处理",request);
             filterChain.doFilter(request, response);
             return;
         }
