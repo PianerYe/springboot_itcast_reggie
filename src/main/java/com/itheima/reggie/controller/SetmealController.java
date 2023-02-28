@@ -86,6 +86,7 @@ public class SetmealController {
     @PostMapping
     @CacheEvict(value = "setmealCache",allEntries = true)
     @ApiOperation(value = "新增套餐接口")
+    @ApiImplicitParam(name = "setmealDto",value = "套餐名称",required = true)
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("setmealDto: {}",setmealDto.toString());
 
