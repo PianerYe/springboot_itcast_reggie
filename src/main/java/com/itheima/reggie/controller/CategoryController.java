@@ -92,7 +92,6 @@ public class CategoryController {
      * */
     @GetMapping("/list")
     @ApiOperation(value = "根据条件查询分类接口")
-//    @ApiImplicitParam(name = "category",value = "菜品(套餐)分类",required = true) 不需要，get请求
     public R<List<Category>> list(Category category){
         //条件构造器
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();

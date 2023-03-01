@@ -98,6 +98,8 @@ public class SetmealController {
      * */
     @GetMapping("/{id}")
     @CacheEvict(value = "setmealCache",allEntries = true)
+    @ApiOperation("查询套餐接口")
+    @ApiImplicitParam(name = "id",value = "套餐ID",required = true)
     public R<SetmealDto> updata(@PathVariable Long id){
         log.info("根据id查询套餐信息...{}",id);
         SetmealDto setmealDto = setmealService.getByIdWithDish(id);
@@ -105,6 +107,8 @@ public class SetmealController {
     }
 
     @PutMapping
+    @ApiOperation("编辑套餐接口")
+    @ApiImplicitParam(name = "setmealDto",value = "套餐Dto",required = true)
     public R<String> updata(@RequestBody SetmealDto setmealDto){
         log.info("setmealDto:{}",setmealDto);
         setmealService.updateWithDish(setmealDto);
@@ -133,6 +137,7 @@ public class SetmealController {
     @DeleteMapping()
     @CacheEvict(value = "setmealCache",allEntries = true)
     @ApiOperation("套餐删除接口")
+    @ApiImplicitParam(name = "ids",value = "套餐ID的集合",required = false)
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
 
@@ -148,6 +153,7 @@ public class SetmealController {
     @PostMapping("/status/0")
     @CacheEvict(value = "setmealCache",allEntries = true)
     @ApiOperation("套餐禁售接口")
+    @ApiImplicitParam(name = "ids",value = "套餐id的集合",required = false)
     public R<List<Setmeal>> updateStatus0(String ids){
         log.info("传递的ids:{}",ids);
         String[] statusIds = ids.split(",");
@@ -163,6 +169,7 @@ public class SetmealController {
     @PostMapping("/status/1")
     @CacheEvict(value = "setmealCache",allEntries = true)
     @ApiOperation("套餐启售接口")
+    @ApiImplicitParam(name = "ids",value = "套餐id的集合",required = false)
     public R<List<Setmeal>> updateStatus1(String ids){
         log.info("传递的ids:{}",ids);
         String[] statusIds = ids.split(",");
@@ -222,6 +229,8 @@ public class SetmealController {
     }*/
 
     @GetMapping("/dish/{id}")
+    @ApiOperation("查询菜品列表")
+    @ApiImplicitParam(name = "id",value = "套餐id",required = true)
     public R<List<SetmealDishDto>> dish(@PathVariable Long id){
         log.info("setmealId:{}",id);
 

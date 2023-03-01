@@ -13,6 +13,10 @@ import com.itheima.reggie.entity.Orders;
 import com.itheima.reggie.service.OrderDetailService;
 import com.itheima.reggie.service.OrdersService;
 import com.itheima.reggie.service.ShoppingCartService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequestMapping("order")
+@Api(tags = "订单相关接口")
 public class OrderController {
 
     @Autowired
@@ -39,6 +44,8 @@ public class OrderController {
      * 用户下单
      * */
     @PostMapping("submit")
+    @ApiOperation("用户下单")
+    @ApiImplicitParam(name = "orders",value = "订单",required = true)
     public R<String> submit(@RequestBody Orders orders){
         log.info("订单数据:{}",orders);
         ordersService.submit(orders);
@@ -49,6 +56,11 @@ public class OrderController {
      * 手机端查看订单
      * */
     @GetMapping("/userPage")
+    @ApiOperation("手机端查看订单接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页码",required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页包含订单条数",required = true)
+    })
     public R<Page> page(int page,int pageSize){
         Page<Orders> pageInfo = new Page<>(page,pageSize);
         Page<OrdersDto> pageInfoDto = new Page<>();
@@ -81,6 +93,8 @@ public class OrderController {
     }
 
     @PostMapping("/again")
+    @ApiOperation("再次添加订单接口")
+    @ApiImplicitParam(name = "orders",value = "订单",required = true)
     public R<String> again(@RequestBody Orders orders){
         log.info("id是：{}",orders.getId());
         Long id = orders.getId();
@@ -89,6 +103,14 @@ public class OrderController {
     }
 
     @GetMapping("/page")
+    @ApiOperation("查询订单接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页码",required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页显示条数",required = true),
+            @ApiImplicitParam(name = "number",value = "订单号",required = false),
+            @ApiImplicitParam(name = "beginTime",value = "开始时间",required = false),
+            @ApiImplicitParam(name = "beginTime",value = "结束时间",required = false)
+    })
     public R<Page> page(int page,int pageSize,String number,String beginTime,String endTime){
         log.info("page = {},pageSize = {},number = {},beginTime = {},endTime = {}",page,pageSize,number,beginTime,endTime);
         //构造分页构造器
@@ -106,6 +128,8 @@ public class OrderController {
     }
 
     @PutMapping
+    @ApiOperation("订单状态变更")
+    @ApiImplicitParam(name = "orders",value = "订单",required = true)
     public R<String> updatStatus(@RequestBody Orders orders){
         log.info("orders.getId():{},orders.getStatus():{}",orders.getId(),orders.getStatus());
         LambdaUpdateWrapper<Orders> wrapper = new LambdaUpdateWrapper<>();

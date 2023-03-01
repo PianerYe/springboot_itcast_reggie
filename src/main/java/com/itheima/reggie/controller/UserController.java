@@ -7,6 +7,9 @@ import com.itheima.reggie.entity.User;
 import com.itheima.reggie.service.UserService;
 import com.itheima.reggie.utils.SMSUtils;
 import com.itheima.reggie.utils.ValidateCodeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +26,7 @@ import static com.itheima.reggie.utils.SMSUtils.*;
 @RestController
 @Slf4j
 @RequestMapping("user")
+@Api(tags = "用户相关接口")
 public class UserController {
 
     @Autowired
@@ -34,6 +38,8 @@ public class UserController {
      * 发送手机短信验证码
      * */
     @PostMapping("/sendMsg")
+    @ApiOperation("发送手机短信验证码接口")
+    @ApiImplicitParam(name = "user",value = "用户",required = true)
     public R<String> sendMsg(@RequestBody User user){//, HttpSession session){
         log.info("user: {}",user);
         //先判断电话号码不为空
@@ -56,6 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @ApiOperation("用户登录接口")
     public R<User> login(@RequestBody Map map, HttpSession session){
 
         log.info(map.toString());
@@ -96,6 +103,7 @@ public class UserController {
     }
 
     @PostMapping("/loginout")
+    @ApiOperation("用户登录接口")
     public R<String> login(HttpServletRequest request){
         //清理session中保存的当前登录的用户ID
         request.getSession().removeAttribute("user");
@@ -103,6 +111,7 @@ public class UserController {
     }
 
     @GetMapping("/userInfo")
+    @ApiOperation("用户信息显示接口")
     public R<User> userInfo(HttpSession session){
         User userInfo = new User();
         log.info("session.user:{}",session.getAttribute("user"));

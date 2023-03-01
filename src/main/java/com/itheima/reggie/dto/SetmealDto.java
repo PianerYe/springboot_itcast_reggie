@@ -11,9 +11,9 @@ import java.util.List;
 @ApiModel("套餐Dto")
 public class SetmealDto extends Setmeal {
 
-    @ApiModelProperty("菜品口味..待修改")
+    @ApiModelProperty("套餐菜品集合")
     private List<SetmealDish> setmealDishes;
 
-    @ApiModelProperty("菜品名称")
+    @ApiModelProperty("分类名称")
     private String categoryName;
 }

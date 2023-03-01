@@ -5,6 +5,9 @@ import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.ShoppingCart;
 import com.itheima.reggie.service.ShoppingCartService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("shoppingCart")
+@Api(tags = "购物车相关接口")
 public class ShoppingCartController {
 
     @Autowired
@@ -24,6 +28,7 @@ public class ShoppingCartController {
      * 查看购物车
      * */
     @GetMapping("/list")
+    @ApiOperation("查看购物车接口")
     public R<List<ShoppingCart>> list(){
         log.info("查看购物车...");
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
@@ -37,6 +42,8 @@ public class ShoppingCartController {
      * 添加购物车
      * */
     @PostMapping("/add")
+    @ApiOperation("添加购物车接口")
+    @ApiImplicitParam(name = "shoppingCart",value = "购物车",required = true)
     public R<ShoppingCart> save(@RequestBody ShoppingCart shoppingCart){
         //设置用户ID，指定当前是哪个用户的购物车数据
         Long currentId = BaseContext.getCurrentId();
@@ -75,6 +82,8 @@ public class ShoppingCartController {
      * 购物车商品数量减少
      * */
     @PostMapping("/sub")
+    @ApiOperation("购物车商品数量减少接口")
+    @ApiImplicitParam(name = "shoppingCart",value = "购物车",required = true)
     public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
         //查询当前菜品或者套餐是否在购物车中
         Long dishId = shoppingCart.getDishId();
@@ -120,6 +129,7 @@ public class ShoppingCartController {
      * 清空购物车
      * */
     @DeleteMapping("/clean")
+    @ApiOperation("清空购物车接口")
     public R<String> clean(){
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());

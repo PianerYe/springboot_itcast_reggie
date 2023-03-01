@@ -2,6 +2,10 @@ package com.itheima.reggie.controller;
 
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.utils.QiniuUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("common")
 @Slf4j
+@Api(tags = "公共相关接口")
 public class CommonController {
 
     @Value("${reggie.path}")
@@ -29,7 +34,8 @@ public class CommonController {
      * 文件上传
      * */
     @PostMapping("/upload")
-    public R<String[]> upload(@RequestParam("imgFile") MultipartFile imgFile){
+    @ApiOperation("文件上传接口")
+    public R<String[]> upload(@RequestParam("imgFile") @ApiParam(name = "imgFile",value = "上传文件",required = false) MultipartFile imgFile){
         //file是一个临时文件，需要转存到指定位置，否则本次请求完成后临时文件会删除
         log.info(imgFile.toString());
 

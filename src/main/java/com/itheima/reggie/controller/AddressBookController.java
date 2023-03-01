@@ -6,6 +6,9 @@ import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.AddressBook;
 import com.itheima.reggie.service.AddressBookService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("addressBook")
+@Api(tags = "地址簿相关接口")
 public class AddressBookController {
 
     @Autowired
@@ -26,6 +30,8 @@ public class AddressBookController {
      * 新增
      * */
     @PostMapping
+    @ApiOperation("新增地址簿接口")
+    @ApiImplicitParam(name = "addressBook",value = "地址簿",required = true)
     public R<AddressBook> save(@RequestBody AddressBook addressBook){
         addressBook.setUserId(BaseContext.getCurrentId());
 
@@ -40,6 +46,8 @@ public class AddressBookController {
      * */
     @PutMapping("/default")
     @Transactional
+    @ApiOperation("设置默认地址接口")
+    @ApiImplicitParam(name = "addressBook",value = "地址簿",required = true)
     public R<AddressBook> setDefault(@RequestBody AddressBook addressBook){
         log.info("addressBook:{}",addressBook);
 
@@ -58,6 +66,8 @@ public class AddressBookController {
      * 根据ID查询地址
      * */
     @GetMapping("/{id}")
+    @ApiOperation("根据ID查询地址接口")
+    @ApiImplicitParam(name = "id",value = "地址簿ID",required = true)
     public R<AddressBook> get(@PathVariable Long id){
         AddressBook addressBook = addressBookService.getById(id);
         if (addressBook != null){
@@ -71,6 +81,7 @@ public class AddressBookController {
      * 查询默认地址
      * */
     @GetMapping("/default")
+    @ApiOperation("查询默认地址接口")
     public R<AddressBook> getDefault(){
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
@@ -86,6 +97,7 @@ public class AddressBookController {
 
 
     @GetMapping("/list")
+    @ApiOperation("查询地址簿列表接口")
     public R<List<AddressBook>> list(AddressBook addressBook, HttpSession session){
         addressBook.setUserId((Long) session.getAttribute("user"));
         log.info("addressBook:{}",addressBook);
@@ -102,6 +114,8 @@ public class AddressBookController {
      * 修改地址信息
      * */
     @PutMapping
+    @ApiOperation("修改地址接口")
+    @ApiImplicitParam(name = "addressBook",value = "地址簿",required = true)
     public R<String> update(@RequestBody AddressBook addressBook){
         log.info("addressBook:{}",addressBook);
 
@@ -113,6 +127,8 @@ public class AddressBookController {
      * 删除地址
      * */
     @DeleteMapping
+    @ApiOperation("删除地址接口")
+    @ApiImplicitParam(name = "ids",value = "地址簿ID集合",required = true)
     public R<String> delete(Long ids){
         log.info("ids:{}",ids);
         addressBookService.removeById(ids);
